@@ -10,10 +10,14 @@ all: $(DIST_JSON) $(DIST_TSV)
 vendor dist:
 	mkdir -p $(@)
 
-$(DIST_JSON): tzcity.py | dist $(CLDR)
+.env:
+	virtualenv $(@)
+	$(@)/bin/pip install -e .
+
+$(DIST_JSON): tzcity.py | dist $(CLDR) .env
 	python tzcity.py json $(SRC_XML) > $(@)
 
-$(DIST_TSV): tzcity.py | dist $(CLDR)
+$(DIST_TSV): tzcity.py | dist $(CLDR) .env
 	python tzcity.py tsv $(SRC_XML) > $(@)
 
 $(CLDR): | vendor
