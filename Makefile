@@ -1,11 +1,11 @@
 LOCALES := ja ar it es de fr pt ru zh zh_Hant en ko
 SRC_XML := $(LOCALES:%=vendor/cldr/common/main/%.xml)
 CLDR := vendor/cldr
-DIST_JSON := dist/cldr_city_names.json
-DIST_TSV := dist/cldr_city_names.tsv
+CITY_JSON := dist/cldr_city_names.json
+CITY_TSV := dist/cldr_city_names.tsv
 
 .PHONY: all
-all: $(DIST_JSON) $(DIST_TSV)
+all: $(CITY_JSON) $(CITY_TSV)
 
 vendor dist:
 	mkdir -p $(@)
@@ -14,10 +14,10 @@ vendor dist:
 	virtualenv $(@)
 	$(@)/bin/pip install -e .
 
-$(DIST_JSON): tzcity.py | dist $(CLDR) .env
+$(CITY_JSON): tzcity.py | dist $(CLDR) .env
 	python tzcity.py json $(SRC_XML) > $(@)
 
-$(DIST_TSV): tzcity.py | dist $(CLDR) .env
+$(CITY_TSV): tzcity.py | dist $(CLDR) .env
 	python tzcity.py tsv $(SRC_XML) > $(@)
 
 $(CLDR): | vendor
