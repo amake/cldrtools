@@ -4,10 +4,12 @@ import os
 import json
 from collections import defaultdict
 from xml.etree import ElementTree as ET
+from pykakasi import kakasi
 
-KATAKANA_CHART = "ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶヽヾ"
-HIRAGANA_CHART = "ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖゝゞ"
-KATA2HIRA = str.maketrans(KATAKANA_CHART, HIRAGANA_CHART)
+KAKASI = kakasi()
+KAKASI.setMode('K', 'H')
+KAKASI.setMode('J', 'H')
+JA_CONV = KAKASI.getConverter()
 
 
 def process_files(files):
@@ -39,10 +41,15 @@ def pivot_langs(data):
             en = translations['en']
         except KeyError:
             en = zone.split('/')[-1].replace('_', ' ')
-        for translation in translations.values():
+        for lang, translation in translations.items():
             trans_norm = translation.lower()
             result[trans_norm] = en
-            result[trans_norm.translate(KATA2HIRA)] = en
+            if lang == 'ja':
+                try:
+                    ja = JA_CONV.do(trans_norm)
+                    result[ja] = en
+                except KeyError:
+                    pass
     return result
 
 

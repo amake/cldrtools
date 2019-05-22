@@ -24,4 +24,5 @@ setup(
     ],
     keywords='city name localization',
     py_modules=['tzcity'],
+    install_requires=['pykakasi'],
 )
